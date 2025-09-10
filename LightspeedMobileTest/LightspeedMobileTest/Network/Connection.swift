@@ -11,7 +11,11 @@ struct Connection {
 
     static let shared = Connection()
 
-    private let session = URLSession.shared
+    private let session: URLSessionType
+
+    init(session: URLSessionType = URLSession.shared) {
+        self.session = session
+    }
 
     func fetchPhoto(index: Int) async throws -> Photo {
 		let photos = try await fetchPhotos()
@@ -23,7 +27,7 @@ struct Connection {
 
         guard let url = URL(string: randomPhoto.downloadURL) else {
             throw NSError(domain: "FetchError", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "Fetch failed: Invalid url for photo \(randomPhoto.url)."
+                NSLocalizedDescriptionKey: "Fetch failed: Invalid url for photo at \(randomPhoto.downloadURL)."
             ])
         }
 
@@ -37,14 +41,11 @@ struct Connection {
         let urlRequest = try Router.fetchPhotos.asURLRequest()
         let (data, _) = try await session.data(for: urlRequest)
         do {
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            let photoData = try decoder.decode(PhotoResponse.self, from: data)
-            return photoData
+            return try PhotoResponseParser.parse(from: data)
         } catch {
             let responseString = String(data: data, encoding: .utf8) ?? "Unable to convert data to string"
             throw NSError(domain: "FetchError", code: 3, userInfo: [
-                NSLocalizedDescriptionKey: "Fetch failed: \(error.localizedDescription). Response: \(responseString)"
+                NSLocalizedDescriptionKey: "Fetch failed: \(error.localizedDescription) Response: \(responseString)"
             ])
         }
     }

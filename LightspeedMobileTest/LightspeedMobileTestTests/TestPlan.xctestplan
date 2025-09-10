@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "9B5D33E4-1F17-4CB8-92F8-8042F7B73E63",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:LightspeedMobileTest.xcodeproj",
+        "identifier" : "4C21B4A22E72046A004E57EE",
+        "name" : "LightspeedMobileTestTests"
+      }
+    }
+  ],
+  "version" : 1
+}
